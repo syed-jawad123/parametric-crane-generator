@@ -23,7 +23,7 @@ def health_check():
 
 
 @router.post("/calculate")
-def calculate_crane(inputs: CraneInputSchema, view: str = Query("both", regex="^(both|elevation|plan)$")):
+def calculate_crane(inputs: CraneInputSchema, view: str = Query("both", pattern="^(both|elevation|plan)$")):
     """
     Validates input parameters and computes derived engineering dimensions,
     clearances, wheel loads, and parametric 2D SVG vector drawing.
@@ -148,7 +148,7 @@ def delete_saved_design(design_id: int):
 
 
 @router.get("/designs/{design_id}/export/svg")
-def export_design_svg(design_id: int, view: str = Query("both", regex="^(both|elevation|plan)$")):
+def export_design_svg(design_id: int, view: str = Query("both", pattern="^(both|elevation|plan)$")):
     """Exports the technical drawing as a standalone downloadable SVG CAD vector file."""
     row = database.get_design(design_id)
     if not row:

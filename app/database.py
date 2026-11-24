@@ -4,12 +4,17 @@ Implements full CRUD lifecycle with transaction safety and seed presets.
 """
 import sqlite3
 import json
+import os
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pathlib import Path
 from app.models import CraneInputSchema
 
-DB_PATH = Path("crane_designs.db")
+# Support serverless read-only filesystems (Vercel lambda writes to /tmp)
+if os.environ.get("VERCEL"):
+    DB_PATH = Path("/tmp/crane_designs.db")
+else:
+    DB_PATH = Path("crane_designs.db")
 
 
 def get_connection() -> sqlite3.Connection:

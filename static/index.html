@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parametric Overhead Crane Drawing Generator | Modern Crane Co.</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏗️</text></svg>">
+</head>
+<body>
+
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-badge">MCC</div>
+      <div>
+        <div class="brand-title">MODERN CRANE CO. — CAD GENERATOR</div>
+        <div class="brand-subtitle">PARAMETRIC OVERHEAD (EOT) CRANE SYSTEM • V1.0</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-secondary btn-sm" id="btn-new-design" title="Reset to standard blank template">
+        <span>+</span> New Design
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btn-open-saved">
+        <span>📁</span> Saved Designs (<span id="saved-count-badge">0</span>)
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btn-export-json" title="Download machine-readable JSON specification">
+        <span>📄</span> JSON Spec
+      </button>
+      <button class="btn btn-primary btn-sm" id="btn-export-svg" title="Download publication-ready CAD vector drawing">
+        <span>⬇️</span> Export SVG
+      </button>
+    </div>
+  </header>
+
+  <!-- Notification / Validation Banner -->
+  <div id="notification-banner" class="notification-banner">
+    <span id="notification-icon">⚠️</span>
+    <span id="notification-text">Validation warning message</span>
+  </div>
+
+  <!-- Main Body Layout -->
+  <div class="app-body">
+
+    <!-- Left Sidebar: Parameters & Structural Constraints -->
+    <aside class="sidebar-controls">
+
+      <!-- Section: Presets -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>⚡</span> Quick Presets
+        </div>
+        <select id="preset-selector" class="input-select">
+          <option value="" disabled selected>Load a standard industry template...</option>
+          <option value="preset-10t">10t Workshop EOT (Span 20m, Lift 7.5m)</option>
+          <option value="preset-25t">25t Heavy Assembly Double Girder (Span 25m, Lift 9m)</option>
+          <option value="preset-5t">5t Warehouse Monorail (Span 14m, Lift 6m)</option>
+        </select>
+      </div>
+
+      <!-- Section: General Information -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>📋</span> Design Identification
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project / Design Reference</label>
+          <input type="text" id="input-name" class="input-text" value="Standard 10t Workshop EOT Crane" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Client Name / Bay Location</label>
+          <input type="text" id="input-customer" class="input-text" value="General Fabrication Bay" maxlength="100">
+        </div>
+      </div>
+
+      <!-- Section: Structural Configuration -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>🏗️</span> Girder Architecture
+        </div>
+        <div class="radio-cards">
+          <div class="radio-card active" data-type="single_girder" id="card-single-girder">
+            <div class="radio-card-title">Single Girder</div>
+            <div class="radio-card-desc">Underslung Hoist (1t - 20t)</div>
+          </div>
+          <div class="radio-card" data-type="double_girder" id="card-double-girder">
+            <div class="radio-card-title">Double Girder</div>
+            <div class="radio-card-desc">Top Crab Winch (10t - 50t)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Primary Dimensional Inputs -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>📐</span> Primary Specifications
+        </div>
+
+        <!-- Safe Working Load (Capacity) -->
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Safe Working Load (Capacity)</span>
+            <span class="form-val-badge" id="val-capacity">10.0 t</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-capacity" class="input-range" min="1.0" max="50.0" step="0.5" value="10.0">
+            <input type="number" id="num-capacity" class="slider-number-input" min="1.0" max="50.0" step="0.5" value="10.0">
+          </div>
+        </div>
+
+        <!-- Crane Span -->
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Rail Center Span (S)</span>
+            <span class="form-val-badge" id="val-span">20,000 mm (20.0 m)</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-span" class="input-range" min="6000" max="35000" step="250" value="20000">
+            <input type="number" id="num-span" class="slider-number-input" min="6000" max="35000" step="250" value="20000">
+          </div>
+        </div>
+
+        <!-- Lifting Height -->
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Effective Lift Height (H)</span>
+            <span class="form-val-badge" id="val-lifting-height">7,500 mm (7.5 m)</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-lifting-height" class="input-range" min="3000" max="24000" step="250" value="7500">
+            <input type="number" id="num-lifting-height" class="slider-number-input" min="3000" max="24000" step="250" value="7500">
+          </div>
+        </div>
+
+        <!-- Top of Rail Height -->
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Top of Rail Elevation</span>
+            <span class="form-val-badge" id="val-rail-height">8,500 mm</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-rail-height" class="input-range" min="3500" max="28000" step="250" value="8500">
+            <input type="number" id="num-rail-height" class="slider-number-input" min="3500" max="28000" step="250" value="8500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Safety Clearances -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>🛡️</span> Building Clearances
+        </div>
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Left Wall Clearance (min 150)</span>
+            <span class="form-val-badge" id="val-clearance-left">300 mm</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-clearance-left" class="input-range" min="150" max="1500" step="50" value="300">
+            <input type="number" id="num-clearance-left" class="slider-number-input" min="150" max="1500" step="50" value="300">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="label-row">
+            <span class="form-label">Right Wall Clearance (min 150)</span>
+            <span class="form-val-badge" id="val-clearance-right">300 mm</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="range-clearance-right" class="input-range" min="150" max="1500" step="50" value="300">
+            <input type="number" id="num-clearance-right" class="slider-number-input" min="150" max="1500" step="50" value="300">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Action Save Button -->
+      <div class="sidebar-section">
+        <button class="btn btn-primary btn-full" id="btn-save-design">
+          <span>💾</span> <span id="save-btn-text">Save Design to Database</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Center: Interactive Vector CAD Viewport -->
+    <main class="cad-viewport">
+
+      <!-- Viewport CAD Toolbar -->
+      <div class="cad-toolbar">
+        <div class="view-mode-tabs">
+          <button class="view-tab active" data-view="both">Both Views (GA Sheet)</button>
+          <button class="view-tab" data-view="elevation">Front Elevation</button>
+          <button class="view-tab" data-view="plan">Plan (Top) View</button>
+        </div>
+
+        <div class="zoom-controls">
+          <button class="zoom-btn" id="btn-zoom-out" title="Zoom Out">-</button>
+          <span class="zoom-label" id="zoom-percentage">100%</span>
+          <button class="zoom-btn" id="btn-zoom-in" title="Zoom In">+</button>
+          <button class="zoom-btn" id="btn-zoom-reset" title="Reset Zoom / Pan">⟲</button>
+          <button class="zoom-btn" id="btn-zoom-fit" title="Fit to Screen">⛶</button>
+        </div>
+      </div>
+
+      <!-- SVG Drawing Surface -->
+      <div class="svg-render-area" id="svg-render-area">
+        <div class="svg-pan-zoom-container" id="svg-pan-zoom-container">
+          <!-- Dynamically Injected SVG CAD Drawing -->
+          <div id="svg-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <div style="color: var(--text-muted); font-size: 13px;">Generating Parametric Vector Drawing...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Engineering Metrics Bar -->
+      <div class="engineering-metrics-bar">
+        <div class="metric-item">
+          <span class="metric-label">Girder Depth (Hg)</span>
+          <span class="metric-val" id="metric-girder-depth">-- mm</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Wheelbase (Wb)</span>
+          <span class="metric-val" id="metric-wheelbase">-- mm</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Crane Deadweight</span>
+          <span class="metric-val" id="metric-deadweight">-- kg</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Max Wheel Load</span>
+          <span class="metric-val" id="metric-wheel-load" style="color: var(--accent-gold);">-- kN</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Design Standard</span>
+          <span class="metric-val" style="color: var(--accent-blue); font-size: 11px;">CMAA 70 / FEM A5</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Modal: Saved Designs List (SQLite Database) -->
+  <div class="modal-overlay" id="modal-saved-designs">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-weight: 700; font-size: 14px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+          <span>📁</span> SAVED CRANE DESIGNS (SQLITE)
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-close-modal">✕ Close</button>
+      </div>
+      <div class="modal-body" id="saved-designs-list">
+        <!-- Rendered via JavaScript from GET /api/designs -->
+        <div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading saved designs...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

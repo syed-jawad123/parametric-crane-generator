@@ -2,6 +2,12 @@
 **Modern Crane Co. — Technical Take-Home Assignment**  
 *Built by Syed Jawad Hussain Shah*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel%20Production-00f5d4?style=for-the-badge&logo=vercel)](https://parametric-crane-app.vercel.app)
+[![API Docs](https://img.shields.io/badge/API%20Docs-Swagger%20UI-blue?style=for-the-badge&logo=fastapi)](https://parametric-crane-app.vercel.app/docs)
+
+* **Live Cloud Deployment:** [https://parametric-crane-app.vercel.app](https://parametric-crane-app.vercel.app)
+* **GitHub Repository:** [https://github.com/syed-jawad123/parametric-crane-generator](https://github.com/syed-jawad123/parametric-crane-generator)
+
 ---
 
 ## 1. Quick Start (How to Run in 1 Command)
